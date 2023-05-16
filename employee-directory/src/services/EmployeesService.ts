@@ -16,7 +16,7 @@ class EmployeesService extends ApiBase implements IEmployeesService {
   public GetEmployees = async (request: IGetEmployeesRequest): Promise<any> => {
     const { page, results } = request;
     return this.instance.get<IUsers>(
-      `/api/?page=${page}&results=${results}&seed=test-employees`
+      `/api/?page=${page}&results=${results}&seed=abc`
     );
   };
 }
