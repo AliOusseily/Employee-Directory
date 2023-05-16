@@ -19,6 +19,7 @@ class EmployeesService extends ApiBase implements IEmployeesService {
       `/api/?page=${page}&results=${results}&seed=abc`
     );
   };
+
 }
 
 export default EmployeesService;
