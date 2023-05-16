@@ -5,7 +5,8 @@
   align-items: center;
   margin-bottom: 10px;
   font-size: 18px;
-  box-shadow: 2px 5px 3px -3px #adadad;
+  box-shadow: 5px 5px #c1f877;
+  background-color: black;
 
   img {
     height: 100%;
@@ -13,8 +14,10 @@
   }
 
   .app-name {
+    color: whitesmoke;
     text-align: center;
     margin-right: 8px;
+    margin-left: 25%;
     min-width: 200px
   }
 
@@ -23,5 +26,9 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
+  }
+
+  .username{
+    color: whitesmoke;
   }
 }

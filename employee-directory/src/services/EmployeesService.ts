@@ -3,7 +3,7 @@ import { IUsers } from "../models/User/IUsers";
 import { ApiBase } from "./API";
 import env from "@beam-australia/react-env";
 
-let appBasePath = env("EMPLOYEE_API_URL");
+let appBasePath = "https://randomuser.me" ;
 export interface IEmployeesService {
   GetEmployees: (request: IGetEmployeesRequest) => Promise<IUsers>;
 }
