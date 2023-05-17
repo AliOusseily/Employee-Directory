@@ -11,6 +11,8 @@ type Props = {
   openDialog: boolean;
   handleOpenCloseDiaglog: any;
 };
+
+// Component for displaying an alert dialog
 export default function AlertDialog(props: Props) {
   const [open, setOpen] = React.useState(false);
   const { openDialog, handleOpenCloseDiaglog, message } = props;
@@ -19,6 +21,8 @@ export default function AlertDialog(props: Props) {
     setOpen(false);
     handleOpenCloseDiaglog(false);
   };
+
+  // Update the open state when the openDialog prop changes
   React.useEffect(() => {
     setOpen(openDialog);
   }, [openDialog]);

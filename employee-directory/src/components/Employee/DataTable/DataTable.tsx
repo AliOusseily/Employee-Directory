@@ -24,6 +24,7 @@ import { visuallyHidden } from "@mui/utils";
 import { IUsers, Result } from "../../../models/User/IUsers";
 import { IGetEmployeesRequest } from "../../../models/Employee/IGetEmployeesRequest";
 import { CustomDialog } from "../../CustomDialog";
+
 // added as static becuase the api doesnt have a total rows count
 const MAX_ROW_COUNT = 100;
 type Order = "asc" | "desc";
@@ -37,8 +38,8 @@ interface HeadCell {
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
+    backgroundColor: theme.palette.grey,
+    color: theme.palette.common.black,
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
@@ -78,13 +79,13 @@ const headCells: readonly HeadCell[] = [
     id: "phone",
     numeric: true,
     disablePadding: false,
-    label: "phone",
+    label: "Phone Number",
   },
   {
     id: "cell",
     numeric: true,
     disablePadding: false,
-    label: "cell",
+    label: "Cell",
   },
 ];
 
