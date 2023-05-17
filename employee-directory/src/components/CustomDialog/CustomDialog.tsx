@@ -10,16 +10,28 @@ type Props = {
   message: string;
   openDialog: boolean;
   handleOpenCloseDiaglog: any;
+  handleDeleteEmplyees: any;
+  selectedEmployees: readonly string[];
+  setSelectedEmployees: any;
 };
 
 // Component for displaying an alert dialog
 export default function AlertDialog(props: Props) {
   const [open, setOpen] = React.useState(false);
-  const { openDialog, handleOpenCloseDiaglog, message } = props;
+  const {
+    openDialog,
+    handleOpenCloseDiaglog,
+    message,
+    handleDeleteEmplyees,
+    selectedEmployees,
+    setSelectedEmployees,
+  } = props;
 
   const handleClose = () => {
     setOpen(false);
     handleOpenCloseDiaglog(false);
+    handleDeleteEmplyees(selectedEmployees);
+    setSelectedEmployees([]);
   };
 
   // Update the open state when the openDialog prop changes

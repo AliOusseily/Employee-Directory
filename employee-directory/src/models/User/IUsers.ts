@@ -6,16 +6,16 @@ export interface IUsers {
 export interface Result {
   gender: string;
   name: Name;
-  location: Location;
+  location?: Location | null;
   email: string;
-  login: Login;
-  dob: Dob;
-  registered: Registered;
+  login?: Login | null;
+  dob?: Dob | null;
+  registered?: Registered | null;
   phone: string;
   cell: string;
-  id: Id;
-  picture: Picture;
-  nat: string;
+  id?: Id | null;
+  picture?: Picture | null;
+  nat?: string | null;
 }
 
 export interface Name {

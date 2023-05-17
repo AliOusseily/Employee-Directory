@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { DataTable } from "./DataTable";
-import EmployeesService, {
-  IEmployeesService,
-} from "../../services/EmployeesService";
+import EmployeesService from "../../services/EmployeesService";
 import { IGetEmployeesRequest } from "../../models/Employee/IGetEmployeesRequest";
-import { IUsers } from "../../models/User/IUsers";
+import { IUsers, Result } from "../../models/User/IUsers";
 import { Dialog, DialogContent, DialogContentText } from "@mui/material";
 import { EmployeeForm } from "../EmployeeForm";
 
@@ -22,11 +20,21 @@ const defaultEmployeesRequest = {
   page: 0,
   results: 10,
 };
+
+const defaultEmployeeModel: Result = {
+  gender: "male",
+  name: { first: "", last: "", title: "" },
+  email: "",
+  phone: "",
+  cell: "",
+};
+
 export default function Employee() {
   const [isLoading, setIsLoading] = useState(false);
   const [openEmployeeDialog, setOpenEmployeeDialog] = useState(false);
-
   const [employees, setEmployees] = useState<IUsers>(defaultEmployeesState);
+  const [employee, setEmployee] = useState<Result>(defaultEmployeeModel);
+
   const [getEmployeesRequest, setGetEmployeesRequest] =
     useState<IGetEmployeesRequest>(defaultEmployeesRequest);
 
@@ -35,25 +43,47 @@ export default function Employee() {
   ) => {
     setGetEmployeesRequest(employeesRequest);
   };
-  const handleOpenCloseEmployeeDiaglog = (open: boolean) => {
+
+  const handleOpenCloseEmployeeDiaglog = (open: boolean, id?: string) => {
+    if (id) {
+      const emp = employees.results.find((x) => x.id?.value === id);
+      emp && setEmployee(emp);
+    } else {
+      setEmployee(defaultEmployeeModel);
+    }
     setOpenEmployeeDialog(open);
   };
+
+  const handleCreateUpdateEmployee = (employee: Result) => {
+    console.log(employee);
+    handleOpenCloseEmployeeDiaglog(false);
+  };
+
+  const handleDeleteEmplyees = (ids: string[]) => {
+    const res = employees.results.filter(
+      (employee: any) => !ids.includes(employee.id.value)
+    );
+    employees.results = [...res];
+    setEmployees(employees);
+  };
+
   useEffect(() => {
     const getData = async () => {
       setIsLoading(true);
-
       var response = await employeesService.GetEmployees(getEmployeesRequest);
       setIsLoading(false);
       setEmployees(response);
     };
     getData();
   }, [getEmployeesRequest]);
+
   return (
     <div>
       <EmployeeForm
         open={openEmployeeDialog}
-        employee={null}
+        employee={employee}
         handleOpenCloseEmployeeDiaglog={handleOpenCloseEmployeeDiaglog}
+        handleCreateUpdateEmployee={handleCreateUpdateEmployee}
       ></EmployeeForm>
       <Dialog
         open={isLoading}
@@ -71,6 +101,7 @@ export default function Employee() {
         handleChangeEmployeesRequest={handleChangeEmployeesRequest}
         getEmployeesRequest={getEmployeesRequest}
         handleOpenCloseEmployeeDiaglog={handleOpenCloseEmployeeDiaglog}
+        handleDeleteEmplyees={handleDeleteEmplyees}
       />
     </div>
   );

@@ -1,7 +1,7 @@
 import { IGetEmployeesRequest } from "../models/Employee/IGetEmployeesRequest";
 import { IUsers } from "../models/User/IUsers";
 import { ApiBase } from "./API";
-import env from "@beam-australia/react-env";
+import env from "@beam-australia/react-env"; // TODO create env file to get value of th
 
 let appBasePath = "https://randomuser.me";
 
@@ -19,9 +19,9 @@ class EmployeesService extends ApiBase implements IEmployeesService {
   // Implementation of the GetEmployees method from the IEmployeesService interface
   public GetEmployees = async (request: IGetEmployeesRequest): Promise<any> => {
     const { page, results } = request;
-  
+
     // Construct the URL with query parameters for pagination
-    const url = `/api/?page=${page}&results=${results}&seed=abc`;
+    const url = `/api/?page=${page + 1}&results=${results}&seed=abc`;
 
     // Make a GET request to the specified API endpoint with the constructed URL
     return this.instance.get<IUsers>(url);

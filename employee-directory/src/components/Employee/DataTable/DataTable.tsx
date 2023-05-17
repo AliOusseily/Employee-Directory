@@ -3,7 +3,7 @@ import { alpha } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell,{ tableCellClasses } from "@mui/material/TableCell";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
@@ -24,10 +24,10 @@ import { visuallyHidden } from "@mui/utils";
 import { IUsers, Result } from "../../../models/User/IUsers";
 import { IGetEmployeesRequest } from "../../../models/Employee/IGetEmployeesRequest";
 import { CustomDialog } from "../../CustomDialog";
+import { Avatar } from "@mui/material";
 
 // added as static becuase the api doesnt have a total rows count
 const MAX_ROW_COUNT = 100;
-type Order = "asc" | "desc";
 
 interface HeadCell {
   disablePadding: boolean;
@@ -44,6 +44,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
   },
+  padding: "5px",
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
@@ -58,9 +59,15 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 const headCells: readonly HeadCell[] = [
   {
+    id: "picture",
+    numeric: false,
+    disablePadding: false,
+    label: "Picture",
+  },
+  {
     id: "name",
     numeric: false,
-    disablePadding: true,
+    disablePadding: false,
     label: "Name",
   },
   {
@@ -91,34 +98,20 @@ const headCells: readonly HeadCell[] = [
 
 interface EnhancedTableProps {
   numSelected: number; // Represents the number of selected items
-  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Result) => void;
   // Callback function triggered when sorting is requested. It takes an event of type React.MouseEvent<unknown>
   // and a property of type keyof Result (a key of the Result interface) as parameters
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
   // Callback function triggered when all items are selected. It takes an event of type React.ChangeEvent<HTMLInputElement> as a parameter
-  order: Order; // Represents the sorting order ('asc' or 'desc')
-  orderBy: string; // Represents the property by which the table should be sorted
   rowCount: number; // Represents the total number of rows in the table
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
-  const {
-    onSelectAllClick,
-    order,
-    orderBy,
-    numSelected,
-    rowCount,
-    onRequestSort,
-  } = props;
-  const createSortHandler =
-    (property: keyof Result) => (event: React.MouseEvent<unknown>) => {
-      onRequestSort(event, property);
-    };
+  const { onSelectAllClick, numSelected, rowCount } = props;
 
   return (
     <TableHead>
       <StyledTableRow>
-        <StyledTableCell padding="checkbox">
+        <StyledTableCell padding="checkbox" style={{ background: "#ffffff" }}>
           <Checkbox
             color="primary"
             indeterminate={numSelected > 0 && numSelected < rowCount}
@@ -127,6 +120,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             inputProps={{
               "aria-label": "select all desserts",
             }}
+            style={{ background: "#ffffff" }}
           />
         </StyledTableCell>
         {headCells.map((headCell) => (
@@ -134,20 +128,9 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             key={headCell.id}
             align={headCell.numeric ? "right" : "left"}
             padding={headCell.disablePadding ? "none" : "normal"}
-            sortDirection={orderBy === headCell.id ? order : false}
+            style={{ background: "#ffffff" }}
           >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : "asc"}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <Box component="span" sx={visuallyHidden}>
-                  {order === "desc" ? "sorted descending" : "sorted ascending"}
-                </Box>
-              ) : null}
-            </TableSortLabel>
+            {headCell.label}
           </StyledTableCell>
         ))}
       </StyledTableRow>
@@ -156,21 +139,20 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 }
 
 interface EnhancedTableToolbarProps {
-  numSelected: number;
+  selected: readonly string[];
   handleDeleteRows: any;
   handleOpenCloseEmployeeDiaglog: any;
 }
 
 function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-  const { numSelected, handleDeleteRows, handleOpenCloseEmployeeDiaglog } =
-    props;
+  const { selected, handleDeleteRows, handleOpenCloseEmployeeDiaglog } = props;
 
   return (
     <Toolbar
       sx={{
         pl: { sm: 2 },
         pr: { xs: 1, sm: 1 },
-        ...(numSelected > 0 && {
+        ...(selected.length > 0 && {
           bgcolor: (theme) =>
             alpha(
               theme.palette.primary.main,
@@ -179,14 +161,14 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         }),
       }}
     >
-      {numSelected > 0 ? (
+      {selected.length > 0 ? (
         <Typography
           sx={{ flex: "1 1 100%" }}
           color="inherit"
           variant="subtitle1"
           component="div"
         >
-          {numSelected} selected
+          {selected.length} selected
         </Typography>
       ) : (
         <Typography
@@ -198,7 +180,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           Employees
         </Typography>
       )}
-      {numSelected > 0 ? (
+      {selected.length > 0 ? (
         <>
           <Tooltip title="Delete">
             <IconButton
@@ -209,11 +191,11 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
               <DeleteIcon />
             </IconButton>
           </Tooltip>
-          {numSelected === 1 && (
+          {selected.length === 1 && (
             <Tooltip title="Edit">
               <IconButton
                 onClick={() => {
-                  handleOpenCloseEmployeeDiaglog(true);
+                  handleOpenCloseEmployeeDiaglog(true, selected[0]);
                 }}
               >
                 <EditIcon />
@@ -226,7 +208,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           <Tooltip title="Add New">
             <IconButton
               onClick={() => {
-                handleOpenCloseEmployeeDiaglog(true);
+                handleOpenCloseEmployeeDiaglog(true, null);
               }}
             >
               <AddIcon />
@@ -242,33 +224,25 @@ type Props = {
   handleChangeEmployeesRequest: any;
   getEmployeesRequest: IGetEmployeesRequest;
   handleOpenCloseEmployeeDiaglog: any;
+  handleDeleteEmplyees: any;
 };
 export default function EnhancedTable(props: Props) {
-  const [order, setOrder] = React.useState<Order>("asc");
-  const [orderBy, setOrderBy] = React.useState<keyof Result>("name");
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [openDialog, setOpenDialog] = React.useState(false);
-  const handleRequestSort = (
-    event: React.MouseEvent<unknown>,
-    property: keyof Result
-  ) => {
-    const isAsc = orderBy === property && order === "asc";
-    setOrder(isAsc ? "desc" : "asc");
-    setOrderBy(property);
-  };
   const {
     employees,
     handleChangeEmployeesRequest,
     getEmployeesRequest,
     handleOpenCloseEmployeeDiaglog,
+    handleDeleteEmplyees,
   } = props;
 
   const { results } = employees;
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected = results.map((n: any) => n.name.first);
+      const newSelected = results.map((n: any) => n.id.value);
       setSelected(newSelected);
       return;
     }
@@ -323,6 +297,10 @@ export default function EnhancedTable(props: Props) {
 
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
 
+  const RenderProfileImage = (value: any) => {
+    return <Avatar variant="rounded" src={value} />;
+  };
+
   React.useEffect(() => {
     setPage(getEmployeesRequest.page);
     setRowsPerPage(getEmployeesRequest.results);
@@ -331,13 +309,16 @@ export default function EnhancedTable(props: Props) {
   return (
     <Box sx={{ width: "100%" }}>
       <CustomDialog
-        message={`Employees To Delete : ${selected.join(" ,")}`}
+        message={`Deleting this item is irreversible. Are you sure you want to proceed?"`}
         openDialog={openDialog}
         handleOpenCloseDiaglog={setOpenDialog}
+        handleDeleteEmplyees={handleDeleteEmplyees}
+        selectedEmployees={selected}
+        setSelectedEmployees={setSelected}
       ></CustomDialog>
       <Paper sx={{ width: "100%", mb: 2 }}>
         <EnhancedTableToolbar
-          numSelected={selected.length}
+          selected={selected}
           handleDeleteRows={handleDeleteRows}
           handleOpenCloseEmployeeDiaglog={handleOpenCloseEmployeeDiaglog}
         />
@@ -349,25 +330,25 @@ export default function EnhancedTable(props: Props) {
           >
             <EnhancedTableHead
               numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
               rowCount={results.length}
             />
             <TableBody>
               {results.map((row: any, index) => {
-                const isItemSelected = isSelected(row.name.first);
+                const isItemSelected = isSelected(row.id.value);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
                   <StyledTableRow
                     hover
-                    onClick={(event) => handleClick(event, row.name.first)}
+                    onClick={(event) => handleClick(event, row.id.value)}
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={row.name.first}
+                    key={
+                      row.id.value ??
+                      `${row.name.first}${row.name.last}${row.name.title}`
+                    }
                     selected={isItemSelected}
                     sx={{ cursor: "pointer" }}
                   >
@@ -380,16 +361,21 @@ export default function EnhancedTable(props: Props) {
                         }}
                       />
                     </StyledTableCell>
+                    <StyledTableCell align="right">
+                      {RenderProfileImage(row.picture?.thumbnail)}
+                    </StyledTableCell>
                     <StyledTableCell
                       component="th"
                       id={labelId}
                       scope="row"
                       padding="none"
                     >
-                      {row.name.first}
+                      {`${row.name.first} ${row.name.last}`}
                     </StyledTableCell>
                     <StyledTableCell align="right">{row.email}</StyledTableCell>
-                    <StyledTableCell align="right">{row.gender}</StyledTableCell>
+                    <StyledTableCell align="right">
+                      {row.gender}
+                    </StyledTableCell>
                     <StyledTableCell align="right">{row.phone}</StyledTableCell>
                     <StyledTableCell align="right">{row.cell}</StyledTableCell>
                   </StyledTableRow>
