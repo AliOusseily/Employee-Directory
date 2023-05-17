@@ -35,7 +35,7 @@ interface HeadCell {
   label: string;
   numeric: boolean;
 }
-
+// use of Styled components from Material UI.
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.grey,
@@ -90,15 +90,15 @@ const headCells: readonly HeadCell[] = [
 ];
 
 interface EnhancedTableProps {
-  numSelected: number;
-  onRequestSort: (
-    event: React.MouseEvent<unknown>,
-    property: keyof Result
-  ) => void;
+  numSelected: number; // Represents the number of selected items
+  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Result) => void;
+  // Callback function triggered when sorting is requested. It takes an event of type React.MouseEvent<unknown>
+  // and a property of type keyof Result (a key of the Result interface) as parameters
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  order: Order;
-  orderBy: string;
-  rowCount: number;
+  // Callback function triggered when all items are selected. It takes an event of type React.ChangeEvent<HTMLInputElement> as a parameter
+  order: Order; // Represents the sorting order ('asc' or 'desc')
+  orderBy: string; // Represents the property by which the table should be sorted
+  rowCount: number; // Represents the total number of rows in the table
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
